@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EXOFRAME PARTS | INDUSTRIAL AR VISOR INTERFACE</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=Rajdhani:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#690005",
+                        "surface-container-high": "#292937",
+                        "surface": "#12121f",
+                        "surface-container-highest": "#343342",
+                        "on-surface": "#e3e0f3",
+                        "primary-fixed": "#cde5ff",
+                        "outline": "#88929d",
+                        "on-tertiary-container": "#4b3200",
+                        "surface-container-low": "#1a1a28",
+                        "tertiary-container": "#d49400",
+                        "tertiary-fixed-dim": "#ffba38",
+                        "on-background": "#e3e0f3",
+                        "surface-container": "#1e1e2c",
+                        "primary-container": "#00a8ff",
+                        "on-tertiary": "#432c00",
+                        "surface-bright": "#383846",
+                        "on-primary-fixed-variant": "#004a75",
+                        "on-secondary-container": "#0f6d00",
+                        "primary-fixed-dim": "#95ccff",
+                        "on-tertiary-fixed-variant": "#604100",
+                        "tertiary-fixed": "#ffdeac",
+                        "secondary-fixed-dim": "#2ae500",
+                        "outline-variant": "#3e4852",
+                        "secondary-container": "#2ff801",
+                        "inverse-surface": "#e3e0f3",
+                        "on-surface-variant": "#bec7d3",
+                        "surface-variant": "#343342",
+                        "secondary": "#d7ffc5",
+                        "on-primary": "#003352",
+                        "on-secondary-fixed": "#022100",
+                        "secondary-fixed": "#79ff5b",
+                        "inverse-on-surface": "#2f2f3d",
+                        "on-tertiary-fixed": "#281900",
+                        "on-secondary": "#053900",
+                        "primary": "#95ccff",
+                        "on-secondary-fixed-variant": "#095300",
+                        "on-primary-fixed": "#001d32",
+                        "error": "#ffb4ab",
+                        "surface-tint": "#95ccff",
+                        "error-container": "#93000a",
+                        "inverse-primary": "#006399",
+                        "background": "#12121f",
+                        "surface-dim": "#12121f",
+                        "on-error-container": "#ffdad6",
+                        "tertiary": "#ffba38",
+                        "surface-container-lowest": "#0d0d1a",
+                        "on-primary-container": "#003a5c"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "4px",
+                        "panel-padding": "20px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "margin-desktop": "64px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["IBM Plex Mono"],
+                        "label-sm": ["Rajdhani"],
+                        "headline-md": ["Orbitron"],
+                        "headline-lg-mobile": ["Orbitron"],
+                        "body-md": ["IBM Plex Mono"],
+                        "display-lg": ["Orbitron"],
+                        "label-lg": ["Rajdhani"],
+                        "headline-lg": ["Orbitron"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                        "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.2em", "fontWeight": "500"}],
+                        "headline-md": ["24px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                        "label-lg": ["16px", {"lineHeight": "1", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Scanline Overlay */
+        .scanlines::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(18, 18, 31, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0.1;
+        }
+
+        /* Custom Crosshair Cursor */
+        body {
+            cursor: crosshair;
+        }
+        .cursor-follow {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(0, 168, 255, 0.5);
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease-out;
+            transform: translate(-50%, -50%);
+        }
+        .cursor-follow::before, .cursor-follow::after {
+            content: '';
+            position: absolute;
+            background: #00a8ff;
+        }
+        .cursor-follow::before { width: 10px; height: 1px; top: 50%; left: -5px; }
+        .cursor-follow::after { width: 1px; height: 10px; top: -5px; left: 50%; }
+
+        /* Glitch & Pulse Effects */
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 5px rgba(0, 168, 255, 0.2); }
+            50% { box-shadow: 0 0 20px rgba(0, 168, 255, 0.5); }
+            100% { box-shadow: 0 0 5px rgba(0, 168, 255, 0.2); }
+        }
+        .animate-pulse-glow {
+            animation: pulse-glow 3s infinite ease-in-out;
+        }
+
+        /* Bracket Card Corners */
+        .bracket-card {
+            position: relative;
+            background: rgba(44, 44, 58, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(136, 146, 157, 0.2);
+        }
+        .bracket-card::before, .bracket-card::after {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border-color: #00a8ff;
+            border-style: solid;
+            pointer-events: none;
+        }
+        .bracket-card::before { top: -2px; left: -2px; border-width: 2px 0 0 2px; }
+        .bracket-card::after { bottom: -2px; right: -2px; border-width: 0 2px 2px 0; }
+
+        /* Ticker Animation */
+        @keyframes ticker {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        .ticker-wrap { overflow: hidden; white-space: nowrap; }
+        .ticker-content { display: inline-block; animation: ticker 20s linear infinite; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0d0d1a; }
+        ::-webkit-scrollbar-thumb { background: #00a8ff; }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md scanlines selection:bg-primary/30">
+<div class="cursor-follow hidden md:block" id="cursor"></div>
+<!-- Navigation -->
+<header class="fixed top-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b-2 border-primary animate-pulse flex justify-between items-center h-20 px-margin-desktop">
+<div class="flex items-center gap-4">
+<span class="font-display-lg text-headline-lg tracking-widest text-primary uppercase">EXOFRAME PARTS</span>
+</div>
+<nav class="hidden md:flex gap-gutter items-center">
+<a class="text-primary font-bold border-x border-primary px-4 font-label-lg transition-all scale-95 cursor-pointer" href="#">HOME</a>
+<a class="text-on-surface-variant font-label-lg hover:text-primary transition-colors hover:bg-primary/10 px-2" href="#">PARTS</a>
+<a class="text-on-surface-variant font-label-lg hover:text-primary transition-colors hover:bg-primary/10 px-2" href="#">ASSEMBLY</a>
+<a class="text-on-surface-variant font-label-lg hover:text-primary transition-colors hover:bg-primary/10 px-2" href="#">INTEL</a>
+</nav>
+<div class="flex items-center gap-6">
+<div class="relative hidden lg:block">
+<input class="bg-transparent border-b border-primary text-primary font-body-md focus:outline-none focus:border-white transition-all w-48 focus:w-64" placeholder="SEARCH_SYSTEM..." type="text"/>
+<span class="material-symbols-outlined absolute right-0 bottom-1 text-primary text-body-md">search</span>
+</div>
+<div class="flex gap-4">
+<button class="material-symbols-outlined text-primary hover:scale-110 transition-transform">shopping_cart</button>
+<button class="material-symbols-outlined text-primary hover:scale-110 transition-transform">account_circle</button>
+</div>
+</div>
+</header>
+<!-- Ticker Sub-header -->
+<div class="fixed top-20 left-0 w-full bg-surface-container-lowest border-b border-outline-variant z-40 py-1 ticker-wrap">
+<div class="ticker-content font-label-sm text-secondary uppercase flex gap-12 items-center">
+<span>SYSTEM_STATUS: ALL_MODULES_OPTIMAL</span>
+<span>STOCK_UPDATE: HYDRAULIC_ACTUATOR_X88 [IN_STOCK]</span>
+<span>NEURAL_LINK_LATENCY: 0.04ms</span>
+<span>LATEST_SHIPMENT: TOKYO_HUB_ARRIVED</span>
+<span>SYSTEM_STATUS: ALL_MODULES_OPTIMAL</span>
+<span>STOCK_UPDATE: TITANIUM_SKELETON_V4 [LOW_STOCK]</span>
+</div>
+</div>
+<main class="pt-32">
+<!-- Hero Section -->
+<section class="relative min-h-[921px] flex items-center px-margin-desktop overflow-hidden">
+<!-- STITCH_SHADER_START:ANIMATION_3 class="absolute inset-0 w-full h-full opacity-40" -->
+<div class="absolute inset-0 w-full h-full opacity-40" style="display:block;">
+<canvas id="shader-canvas-ANIMATION_3" style="display:block;width:100%;height:100%"></canvas>
+<script>
+(function() {
+  const canvas = document.getElementById('shader-canvas-ANIMATION_3');
+
+  // Sync the WebGL drawing-buffer size with the CSS-driven layout size.
+  // This fires on initial layout and whenever the element is resized.
+  function syncSize() {
+    const w = canvas.clientWidth  || 1280;
+    const h = canvas.clientHeight || 720;
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width  = w;
+      canvas.height = h;
+    }
+  }
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(syncSize).observe(canvas);
+  }
+  syncSize();
+
+  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+  if (!gl) return;
+  const vs = `attribute vec2 a_position;
+varying vec2 v_texCoord;
+void main() {
+  v_texCoord = a_position * 0.5 + 0.5;
+  gl_Position = vec4(a_position, 0.0, 1.0);
+}`;
+  const fs = `precision highp float;
+varying vec2 v_texCoord;
+uniform float u_time;
+uniform vec2 u_resolution;
+
+void main() {
+    vec2 uv = v_texCoord;
+    
+    // Grid lines
+    float gridWidth = 0.01;
+    float gridFreq = 20.0;
+    
+    vec2 grid = abs(fract(uv * gridFreq - 0.5) - 0.5) / (gridFreq * gridWidth);
+    float line = min(grid.x, grid.y);
+    float gridPattern = 1.0 - smoothstep(0.0, 1.0, line);
+    
+    // Moving perspective lines (simulated)
+    float perspective = 1.0 - distance(uv, vec2(0.5));
+    float alpha = gridPattern * 0.15 * perspective;
+    
+    // Blue glow
+    vec3 color = vec3(0.0, 0.66, 1.0) * alpha;
+    
+    // Scanlines
+    float scanline = sin(uv.y * 800.0 + u_time * 5.0) * 0.04;
+    color -= scanline;
+
+    gl_FragColor = vec4(color, alpha);
+}`;
+  function cs(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, cs(gl.VERTEX_SHADER, vs));
+  gl.attachShader(prog, cs(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  const pos = gl.getAttribLocation(prog, 'a_position');
+  gl.enableVertexAttribArray(pos);
+  gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+  const uTime = gl.getUniformLocation(prog, 'u_time');
+  const uRes = gl.getUniformLocation(prog, 'u_resolution');
+  const uMouse = gl.getUniformLocation(prog, 'u_mouse');
+
+  // u_mouse is in pixel coordinates matching u_resolution (ShaderToy convention).
+  // Shaders that need normalized coords should use: u_mouse / u_resolution.
+  let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+  window.addEventListener('mousemove', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width && rect.height) {
+      const nx = (event.clientX - rect.left) / rect.width;
+      const ny = 1.0 - (event.clientY - rect.top) / rect.height;
+      mouse.x = nx * canvas.width;
+      mouse.y = ny * canvas.height;
+    }
+  });
+
+  function render(t) {
+    if (typeof ResizeObserver === 'undefined') syncSize();
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    if (uTime) gl.uniform1f(uTime, t * 0.001);
+    if (uRes) gl.uniform2f(uRes, canvas.width, canvas.height);
+    if (uMouse) gl.uniform2f(uMouse, mouse.x, mouse.y);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    requestAnimationFrame(render);
+  }
+  render(0);
+})();
+</script>
+</div>
+<!-- STITCH_SHADER_END:ANIMATION_3 -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter w-full relative z-10">
+<div class="flex flex-col justify-center space-y-8">
+<div class="space-y-2">
+<span class="font-label-sm text-secondary bg-secondary/10 px-3 py-1 border border-secondary inline-block">PRODUCTION_PHASE: ALPHA-09</span>
+<h1 class="font-display-lg text-headline-lg md:text-[64px] text-on-surface leading-none">UPGRADE YOUR<br/><span class="text-primary">BIOLOGICAL_LIMITS</span></h1>
+<p class="font-body-lg text-on-surface-variant max-w-xl">Precision-engineered exo-skeleton components for industrial, medical, and defensive applications. Sourced from the asteroid belt, refined in Neo-Tokyo.</p>
+</div>
+<div class="flex gap-4">
+<button class="font-label-lg px-8 py-4 bg-primary/20 border border-primary text-primary hover:bg-primary hover:text-on-primary transition-all duration-300">
+                            [ BROWSE_CATALOG ]
+                        </button>
+<button class="font-label-lg px-8 py-4 border border-outline text-on-surface hover:border-primary transition-all duration-300">
+                            [ VIEW_MANUALS ]
+                        </button>
+</div>
+<div class="grid grid-cols-3 gap-8 pt-8">
+<div>
+<div class="font-display-lg text-primary" id="stat-1">0</div>
+<div class="font-label-sm text-on-surface-variant">PARTS_DELIVERED</div>
+</div>
+<div>
+<div class="font-display-lg text-primary" id="stat-2">0</div>
+<div class="font-label-sm text-on-surface-variant">ACTIVE_FRAMES</div>
+</div>
+<div>
+<div class="font-display-lg text-primary" id="stat-3">0</div>
+<div class="font-label-sm text-on-surface-variant">NEURAL_SYNC_%</div>
+</div>
+</div>
+</div>
+<div class="relative h-[600px] hidden md:block">
+<!-- STITCH_THREEJS_START:ANIMATION_4 class="w-full h-full" -->
+<div class="w-full h-full" style="display:block;">
+<script src="https://ajax.googleapis.com/ajax/libs/threejs/r125/three.min.js"></script>
+<div id="threejs-container-ANIMATION_4" style="width:100%;height:100%"></div>
+<script>
+(function() {
+  const container = document.getElementById('threejs-container-ANIMATION_4');
+  const devicePixelRatio = window.devicePixelRatio || 1;
+  const width = container.clientWidth || window.innerWidth;
+const height = container.clientHeight || window.innerHeight;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+camera.position.z = 5;
+
+const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+renderer.setSize(width, height);
+renderer.setPixelRatio(window.devicePixelRatio);
+container.appendChild(renderer.domElement);
+
+// Simple Wireframe Robot Arm (Constructed with primitives)
+const group = new THREE.Group();
+
+const baseGeom = new THREE.CylinderGeometry(0.5, 0.5, 0.2, 32);
+const baseMat = new THREE.MeshBasicMaterial({ color: 0x00A8FF, wireframe: true });
+const base = new THREE.Mesh(baseGeom, baseMat);
+group.add(base);
+
+const arm1Geom = new THREE.BoxGeometry(0.2, 1.5, 0.2);
+const arm1 = new THREE.Mesh(arm1Geom, baseMat);
+arm1.position.y = 0.85;
+group.add(arm1);
+
+const jointGeom = new THREE.SphereGeometry(0.15, 16, 16);
+const joint = new THREE.Mesh(jointGeom, baseMat);
+joint.position.y = 1.6;
+group.add(joint);
+
+const arm2Geom = new THREE.BoxGeometry(0.2, 1.2, 0.2);
+const arm2 = new THREE.Mesh(arm2Geom, baseMat);
+arm2.position.y = 2.2;
+arm2.rotation.z = 0.5;
+group.add(arm2);
+
+const gripperGeom = new THREE.TorusGeometry(0.2, 0.05, 8, 16);
+const gripper = new THREE.Mesh(gripperGeom, baseMat);
+gripper.position.set(0.6, 2.8, 0);
+group.add(gripper);
+
+scene.add(group);
+
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambientLight);
+
+function animate() {
+    requestAnimationFrame(animate);
+    group.rotation.y += 0.01;
+    renderer.render(scene, camera);
+}
+
+window.addEventListener('resize', () => {
+    const w = container.clientWidth || window.innerWidth;
+    const h = container.clientHeight || window.innerHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+});
+
+animate();
+})();
+</script>
+</div>
+<!-- STITCH_THREEJS_END:ANIMATION_4 -->
+<!-- HUD Elements -->
+<div class="absolute top-10 right-10 border-l border-t border-primary p-4 bg-surface/40 backdrop-blur-sm animate-pulse-glow">
+<div class="font-label-sm text-primary">ARM_SERVO_CALIBRATION</div>
+<div class="flex gap-1 mt-2">
+<div class="w-2 h-4 bg-primary"></div>
+<div class="w-2 h-4 bg-primary"></div>
+<div class="w-2 h-4 bg-primary/30"></div>
+<div class="w-2 h-4 bg-primary/30"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- About/Mission Section -->
+<section class="py-24 px-margin-desktop bg-surface-container-lowest relative">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+<div class="relative">
+<!-- STITCH_SVG_START:ANIMATION_5 class="w-full h-auto border border-outline-variant p-8 bg-surface/20" --><div class="w-full h-auto border border-outline-variant p-8 bg-surface/20" id="animated-svg-ANIMATION_5" style="display:block;"><svg fill="none" stroke="#00A8FF" stroke-width="1.5" viewbox="0 0 400 600" xmlns="http://www.w3.org/2000/svg">
+<!-- Humanoid Silhouette -->
+<path d="M200,50 L180,80 L220,80 Z" stroke-dasharray="500" stroke-dashoffset="0">
+<animate attributename="stroke-dashoffset" dur="2s" fill="freeze" from="500" to="0"></animate>
+</path>
+<rect height="100" rx="5" width="50" x="175" y="85"></rect>
+<line x1="175" x2="140" y1="90" y2="150"></line>
+<line x1="225" x2="260" y1="90" y2="150"></line>
+<line x1="185" x2="170" y1="185" y2="280"></line>
+<line x1="215" x2="230" y1="185" y2="280"></line>
+<!-- Callout Lines -->
+<g fill="#00A8FF" font-family="monospace" font-size="10" stroke="none">
+<text x="50" y="70">HEAD: Vision Array</text>
+<path d="M110,70 L190,65" fill="none" opacity="0.6" stroke="#00A8FF" stroke-width="1"></path>
+<text x="270" y="140">ARMS: Servo Stack</text>
+<path d="M270,140 L240,130" fill="none" opacity="0.6" stroke="#00A8FF" stroke-width="1"></path>
+<text x="40" y="250">CORE: Power Cell</text>
+<path d="M140,250 L190,140" fill="none" opacity="0.6" stroke="#00A8FF" stroke-width="1"></path>
+<text x="270" y="280">LEGS: Actuator Set</text>
+<path d="M270,280 L220,230" fill="none" opacity="0.6" stroke="#00A8FF" stroke-width="1"></path>
+</g>
+</svg></div><!-- STITCH_SVG_END:ANIMATION_5 -->
+<div class="absolute -bottom-4 -right-4 bg-primary text-on-primary p-4 font-label-lg">
+                        DOC_ID: 882-BLUEPRINT
+                    </div>
+</div>
+<div class="space-y-6">
+<h2 class="font-headline-lg text-primary uppercase">Mission: Total Integration</h2>
+<p class="font-body-lg text-on-surface-variant">We believe the future of human labor lies in the seamless fusion of biology and mechanics. Our parts are not just replacements; they are enhancements. Every joint, motor, and sensor we produce is tested to 500% of maximum biological load capacity.</p>
+<ul class="space-y-4">
+<li class="flex gap-4 items-start">
+<span class="material-symbols-outlined text-secondary">verified_user</span>
+<div>
+<h4 class="font-label-lg text-on-surface">TITANIUM-G5 CASTING</h4>
+<p class="font-body-md text-on-surface-variant">Aerospace-grade durability for extreme environments.</p>
+</div>
+</li>
+<li class="flex gap-4 items-start">
+<span class="material-symbols-outlined text-secondary">bolt</span>
+<div>
+<h4 class="font-label-lg text-on-surface">NEURAL-LINK COMPATIBILITY</h4>
+<p class="font-body-md text-on-surface-variant">Standardized input for all major CNS interfaces.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- Products Grid -->
+<section class="py-24 px-margin-desktop">
+<div class="flex justify-between items-end mb-12">
+<div>
+<h2 class="font-headline-lg text-on-surface uppercase">COMPONENTS_INVENTORY</h2>
+<p class="font-body-md text-on-surface-variant">Filter by module or efficiency rating.</p>
+</div>
+<div class="flex gap-4">
+<span class="font-label-sm text-secondary flex items-center gap-2 animate-pulse">
+<span class="w-2 h-2 rounded-full bg-secondary"></span> LIVE_STOCK_STATUS
+                    </span>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Product Card 1 -->
+<div class="bracket-card group cursor-pointer transition-all hover:-translate-y-2">
+<div class="relative aspect-square overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" data-alt="A high-tech mechanical hydraulic actuator for a robotic exo-frame, showing detailed metal textures, wires, and glowing blue accents in a dark, clean industrial setting. The style is Cyber-Industrial Minimalism with high-contrast lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAD3g5Svf7NwtYl8kMiGkhPPDvV91Ur30zv05cfYAwBiy9zFq39LKeASOvmUpBd5Q6CMiWPHXA1rveE1HW6OnFzt6pNLyaee5z8O_-5W86zMsooFhZFO8dAvFIwNGmLFReeobpSGmLOUDknzGRN7m9520S3tqz9-LXHP98JwzotWEDODRm7MTRWgUEcioQmQ-ykoqBP-v4uW3wjUST_2Wqm97ZLv5GYogdQ6fzzHvatRlPTlWpd5LKivdlhC6ZlVNkMM0tQjx5jHOFc"/>
+<div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<div class="w-12 h-12 border-2 border-primary relative">
+<div class="absolute inset-0 border border-primary animate-ping"></div>
+<div class="absolute top-1/2 left-0 w-full h-px bg-primary"></div>
+<div class="absolute left-1/2 top-0 w-px h-full bg-primary"></div>
+</div>
+</div>
+<div class="absolute top-2 right-2 bg-secondary/20 text-secondary font-label-sm px-2 py-1 border border-secondary">IN_STOCK</div>
+</div>
+<div class="p-panel-padding space-y-2">
+<div class="font-label-sm text-primary">PART_NO: ACT-X88</div>
+<h3 class="font-headline-md text-on-surface group-hover:text-primary transition-colors">HYDRAULIC_CORE</h3>
+<div class="flex justify-between items-center text-body-md border-t border-outline-variant pt-2 mt-4">
+<span class="text-on-surface-variant">LOAD: 4.5 TON</span>
+<span class="text-primary font-bold">$1,290</span>
+</div>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="bracket-card group cursor-pointer transition-all hover:-translate-y-2">
+<div class="relative aspect-square overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" data-alt="A macro shot of a complex neural link interface with fiber-optic connectors and a glowing central processor core. High-tech neon green and cyan lighting illuminates the intricate circuitry in a dark laboratory environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-GXXWXyTwIHFkt4-b2r4Tx-z2DmEdXH98178Zn-yllkJU9MFBm6DzDl-pNB2KzJQBT0qNbNW_V6d0W26OKVJWngPS7JAKIsyGRO9P_q2u7pxPzIKKC31HwKgMsjWExONT6uN-5lv20OAVN2-KuS5lx7rN0SKai31u2NYrT2A8wJhOoLFyKijvky_nSEqOrQD4aSFbV0ZOSNtSZ1hoBbpWYYviB-4g61ns_rcbZVrOKqydQo6NHnNEfe1hSfrjEHq_647DBQl9PSjm"/>
+<div class="absolute top-2 right-2 bg-secondary/20 text-secondary font-label-sm px-2 py-1 border border-secondary">IN_STOCK</div>
+</div>
+<div class="p-panel-padding space-y-2">
+<div class="font-label-sm text-primary">PART_NO: NRL-012</div>
+<h3 class="font-headline-md text-on-surface group-hover:text-primary transition-colors">NEURO_BRIDGE</h3>
+<div class="flex justify-between items-center text-body-md border-t border-outline-variant pt-2 mt-4">
+<span class="text-on-surface-variant">SYNC: 99.8%</span>
+<span class="text-primary font-bold">$2,450</span>
+</div>
+</div>
+</div>
+<!-- Repeat Product Card (8 Items Total) -->
+<div class="bracket-card group cursor-pointer transition-all hover:-translate-y-2">
+<div class="relative aspect-square overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" data-alt="A rugged robotic leg component made of dark brushed carbon fiber and reinforced titanium. Detailed joint mechanisms and piston-like structures are visible in a high-contrast industrial workshop lighting setup." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzieTVQePVVfQcgCar_LUvsYCvObe2VkWRj95DX64Zu1dw7aB3ALp_GvBWTqhux7UwjK4B2GqKNAtIb60Hq3x0EVb8dtZN0UY5l0GnuCiUldeZK4Wxej32qYAsZeeOf3GxNP8LaquVXQF8YrHB41EbhskNCLuupXck8Vmm28vR2afZlYOV5YBUNylPO6Q83Qhrtwd4oF4CRVdWoDDW9pW6doJkrwo-q7GQc_c4xWlGikcEcOPg3Fy2WP6Kbb-ZtnXdtMbm9g8Z89Jb"/>
+<div class="absolute top-2 right-2 bg-secondary/20 text-secondary font-label-sm px-2 py-1 border border-secondary">IN_STOCK</div>
+</div>
+<div class="p-panel-padding space-y-2">
+<div class="font-label-sm text-primary">PART_NO: LEG-V4</div>
+<h3 class="font-headline-md text-on-surface group-hover:text-primary transition-colors">LOWER_STRUT</h3>
+<div class="flex justify-between items-center text-body-md border-t border-outline-variant pt-2 mt-4">
+<span class="text-on-surface-variant">WT: 12KG</span>
+<span class="text-primary font-bold">$3,100</span>
+</div>
+</div>
+</div>
+<div class="bracket-card group cursor-pointer transition-all hover:-translate-y-2">
+<div class="relative aspect-square overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" data-alt="An advanced electronic sensor unit shaped like a visor with multiple lenses and glowing red infrared indicators. The surface is matte black with fine white technical markings, set against a dark grid background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC04K4P4UA1J5BmgqljYAVuDFCZ6sVohT4QWnAnl-6yW13P5tmgI4V-vUSqZM212N1QneveZFmct09p3rHY4R9rxLJkCbt1IzNHu1MGX9ARQdUeCzsfBZNiU66N2-8mI5QCCoTdJHJKizCPHZk9QsPjWghVw5D1KgtJoSy2lvuVwy-gSN5D33almBk1dy08o1mKuVo7ij2jzdru6iVVGVv9yZqFIVED1GU3tfIM5niVATdJCpyOOxo-OZeR08HXCLMFdmDMu2NmdOb3"/>
+<div class="absolute top-2 right-2 bg-secondary/20 text-secondary font-label-sm px-2 py-1 border border-secondary">IN_STOCK</div>
+</div>
+<div class="p-panel-padding space-y-2">
+<div class="font-label-sm text-primary">PART_NO: SNR-900</div>
+<h3 class="font-headline-md text-on-surface group-hover:text-primary transition-colors">VISUAL_ARRAY</h3>
+<div class="flex justify-between items-center text-body-md border-t border-outline-variant pt-2 mt-4">
+<span class="text-on-surface-variant">FOV: 270°</span>
+<span class="text-primary font-bold">$890</span>
+</div>
+</div>
+</div>
+<!-- Product Card 5 -->
+<div class="bracket-card group cursor-pointer transition-all hover:-translate-y-2">
+<div class="relative aspect-square overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" data-alt="A heavy-duty industrial robotic hand with articulated fingers and reinforced knuckles, built from military-grade alloy. The lighting is cold and blue, emphasizing the mechanical complexity and power." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQHAB3aDdWLYs1Hvk5cP_UYIWk7S1TZrhROVGKKV3dls9RpjxzVeN-JyS1XKfbP1_0KzvF05JIWOpsaI73T_8O3ZWQhS67_7T_ErRpAOIOZS2nAwqGXoUm2WrGQ-HYGu816k5S578pze6F_BjJOdDguKUJoFW2VMZswSZfyxvEO6JT6ECUtfLCflhyHdCfppKGwsi7M59jcBfFc1aGq_qfoVYJfy1roALm5CyDqKN53WdckLu6jJHM0F5yuGSLdBhob_frpydectSx"/>
+<div class="absolute top-2 right-2 bg-secondary/20 text-secondary font-label-sm px-2 py-1 border border-secondary">IN_STOCK</div>
+</div>
+<div class="p-panel-padding space-y-2">
+<div class="font-label-sm text-primary">PART_NO: HND-GRIP</div>
+<h3 class="font-headline-md text-on-surface group-hover:text-primary transition-colors">CRUSH_MANIPULATOR</h3>
+<div class="flex justify-between items-center text-body-md border-t border-outline-variant pt-2 mt-4">
+<span class="text-on-surface-variant">PSI: 1200</span>
+<span class="text-primary font-bold">$1,800</span>
+</div>
+</div>
+</div>
+<!-- Product Card 6 -->
+<div class="bracket-card group cursor-pointer transition-all hover:-translate-y-2">
+<div class="relative aspect-square overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" data-alt="A sleek cylindrical power cell unit with glowing internal plasma energy in electric blue. The casing has technical hex-grid patterns and cooling vents. The aesthetic is extremely futuristic and clean." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxQYFwpWgx7chzs9dRXG2w9gde3ygDSN-iWJ6p09-VwlXG7dhXxC-bklewFR5WUpgm-mnK_VbVfKXnG9bbNVcnSlgBcS8DVJKFX-a9inK0Uo2VmD3l08D67LSnhzd_Y3hUQm4tD-dBickswDVjrzxtL1hKJ_ALlNqahohx5IOCEkBCHSvlZp-VmXKqoOVmJuWQN5aIxtNXJhadVKadS64nod9OruW5QD6gHSTp6pLCCThmVN21MF5582hcvOaCuPQ1KGXoeXUSh4W2"/>
+<div class="absolute top-2 right-2 bg-secondary/20 text-secondary font-label-sm px-2 py-1 border border-secondary">IN_STOCK</div>
+</div>
+<div class="p-panel-padding space-y-2">
+<div class="font-label-sm text-primary">PART_NO: PWR-CELL</div>
+<h3 class="font-headline-md text-on-surface group-hover:text-primary transition-colors">PLASMA_CORE</h3>
+<div class="flex justify-between items-center text-body-md border-t border-outline-variant pt-2 mt-4">
+<span class="text-on-surface-variant">CAP: 50kWh</span>
+<span class="text-primary font-bold">$4,500</span>
+</div>
+</div>
+</div>
+<!-- Product Card 7 -->
+<div class="bracket-card group cursor-pointer transition-all hover:-translate-y-2">
+<div class="relative aspect-square overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" data-alt="A detailed torso frame structure for an exoskeleton, showcasing carbon-fiber ribbing and integrated spinal supports. Glowing white light paths trace the neural conduit lines in a high-tech dark space." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7_w-2yR1qp2ObjdESavCj_DYg41gYcuR0sErJ4WxqJ5r1xuZAbQ429EWkCyHt7VMM62OK6gMfQxVR9pz9cmewyL2onNTTj4OzI3rvPkQpDS548X2mFBWDqRZoOZuUiMXMzIdZApWkmysSnRmJ9iD-dpW14tS9OoILxfME1hUxDl7qQssDE4ky-zALJSZ1HtqX_Ge3e9PUPIa8b5KeSrtyAk2KsHltTZqNJk06ckDpCYnLWthL-1GpV_XSaHngAP8Vu2XbsccEczUb"/>
+<div class="absolute top-2 right-2 bg-secondary/20 text-secondary font-label-sm px-2 py-1 border border-secondary">IN_STOCK</div>
+</div>
+<div class="p-panel-padding space-y-2">
+<div class="font-label-sm text-primary">PART_NO: TSO-M1</div>
+<h3 class="font-headline-md text-on-surface group-hover:text-primary transition-colors">SPINAL_RIG</h3>
+<div class="flex justify-between items-center text-body-md border-t border-outline-variant pt-2 mt-4">
+<span class="text-on-surface-variant">PTS: 32 ADJ</span>
+<span class="text-primary font-bold">$5,200</span>
+</div>
+</div>
+</div>
+<!-- Product Card 8 -->
+<div class="bracket-card group cursor-pointer transition-all hover:-translate-y-2">
+<div class="relative aspect-square overflow-hidden bg-surface-container-high">
+<img class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity" data-alt="A robotic cooling fan module with multiple transparent blades and an integrated radiator, illuminated by soft blue light. The housing features complex industrial geometry and exposed copper pipes." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKcR_lXUhAe-FgeQ60ch2S6kZcuKccKBnNX0LTS4NdquBMRgdxr1_DOWPqx2jwJJvaXgSxdLd_bTlWpPZJ7XE9DNcCt3XXZckHDegNxHwNKI_M-mUr1zS7zIJ6iuXR2Z5KU3fv29u0MCgUCr7qtjPK5q6ODEu002ufcZYj5RVm-ONNbKxWYztFXIDQ4d7CYmNUE922S39e3vGsqmkWuXCZEWJLIiz4k502zkThJ0oboZBA0hwluybYyjyf0o1jM-_z4fL3tf8loVlF"/>
+<div class="absolute top-2 right-2 bg-error/20 text-error font-label-sm px-2 py-1 border border-error">LOW_STOCK</div>
+</div>
+<div class="p-panel-padding space-y-2">
+<div class="font-label-sm text-primary">PART_NO: CL-UNIT</div>
+<h3 class="font-headline-md text-on-surface group-hover:text-primary transition-colors">THERMAL_SINK</h3>
+<div class="flex justify-between items-center text-body-md border-t border-outline-variant pt-2 mt-4">
+<span class="text-on-surface-variant">TEMP: -10°C</span>
+<span class="text-primary font-bold">$420</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Build Kit Wide Cards -->
+<section class="py-24 px-margin-desktop space-y-gutter">
+<h2 class="font-headline-lg text-on-surface uppercase mb-12">SYSTEM_BUNDLES</h2>
+<!-- Kit 1 -->
+<div class="bracket-card flex flex-col md:flex-row gap-8 overflow-hidden group">
+<div class="md:w-1/3 aspect-video md:aspect-auto">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="A full industrial exoskeleton frame standing in a dark, moody warehouse setting. High-key spotlights illuminate the metallic frame, revealing heavy gears and yellow warning labels. Detailed technical style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSRDhyPvJmfrU2gXPDTc1mG-v8lqhWmjIq67ob-9eF7OjqPXlGloqAPpmcNrHHk5byXZvZXL6dTSdMUY1Taz9DGW_50qy8heOha20ZQp1ZP-z_Vtrmyj5W3T13FMJzMEpjYmbTWqBEdec1p9GCR1JK_2_G0QmLV1xE9eBM5XROe4YpS5np6DuZjzCADsmc3udriAogHHwQkZnkIfWh7kEkm1ukvP499yYQgLUh5jvjY_Gww75Hfp1cDI7ShxR8bK-ld-NZgW7cEbs6"/>
+</div>
+<div class="p-panel-padding flex-1 flex flex-col justify-center space-y-4">
+<div class="flex justify-between items-start">
+<div>
+<span class="font-label-sm text-tertiary">MODEL: TITAN-HEAVY</span>
+<h3 class="font-headline-lg text-on-surface">HEAVY_LIFT_KIT</h3>
+</div>
+<div class="text-right">
+<div class="font-label-sm text-on-surface-variant">DIFFICULTY_RATING</div>
+<div class="flex gap-1 mt-1">
+<div class="w-4 h-2 bg-primary"></div>
+<div class="w-4 h-2 bg-primary"></div>
+<div class="w-4 h-2 bg-primary"></div>
+<div class="w-4 h-2 bg-primary/20"></div>
+<div class="w-4 h-2 bg-primary/20"></div>
+</div>
+</div>
+</div>
+<p class="font-body-md text-on-surface-variant max-w-2xl">Complete hardware suite for logistical operations. Includes full hydraulic leg support and dual-actuated shoulder assembly. Designed for 500kg lifting tasks.</p>
+<div class="flex gap-4">
+<button class="font-label-lg px-6 py-2 bg-primary/10 border border-primary text-primary hover:bg-primary hover:text-on-primary transition-all">[ CONFIGURE_BUILD ]</button>
+<span class="text-headline-md text-on-surface self-center">$12,500</span>
+</div>
+</div>
+</div>
+<!-- Kit 2 -->
+<div class="bracket-card flex flex-col md:flex-row-reverse gap-8 overflow-hidden group">
+<div class="md:w-1/3 aspect-video md:aspect-auto">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="A sleek, lightweight medical exoskeleton frame for gait assistance, shown in a clean clinic-like environment with soft blue neon accents. The carbon fiber structure is thin and elegant, emphasizing precision." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAj4MOUyBxBYlOUXkrDnCxg1QX_7VBQK72DyIP2tdcXTDYX8LeJ3AlGv7VJ4H7rFzoMiIBvO10v-2ssLSanVAihAhMKqbrWf5H8mpycJcBZGND9I-zdpA2T1lZ6wKragR-mrPEl7XSYV258ERJZqDRDshMEn0rtSzAqzsitfq2UzgQGdJIje-jrtDqFIy1TOfz2k5rv7VHgBhotXICsKYgHR0L3yJhc2nZXJxrl4IB59KCJi_zWl3k9DJbIO3o8eHlLcaWuSs0FU1vR"/>
+</div>
+<div class="p-panel-padding flex-1 flex flex-col justify-center space-y-4">
+<div class="flex justify-between items-start">
+<div>
+<span class="font-label-sm text-tertiary">MODEL: MED-STRIDE</span>
+<h3 class="font-headline-lg text-on-surface">GAIT_ASSIST_BUNDLE</h3>
+</div>
+<div class="text-right">
+<div class="font-label-sm text-on-surface-variant">DIFFICULTY_RATING</div>
+<div class="flex gap-1 mt-1">
+<div class="w-4 h-2 bg-primary"></div>
+<div class="w-4 h-2 bg-primary"></div>
+<div class="w-4 h-2 bg-primary"></div>
+<div class="w-4 h-2 bg-primary"></div>
+<div class="w-4 h-2 bg-primary"></div>
+</div>
+</div>
+</div>
+<p class="font-body-md text-on-surface-variant max-w-2xl">High-precision medical grade assembly focused on fluid movement and natural kinetics. Requires neuro-calibration and certified integration.</p>
+<div class="flex gap-4">
+<button class="font-label-lg px-6 py-2 bg-primary/10 border border-primary text-primary hover:bg-primary hover:text-on-primary transition-all">[ CONFIGURE_BUILD ]</button>
+<span class="text-headline-md text-on-surface self-center">$18,200</span>
+</div>
+</div>
+</div>
+<!-- Kit 3 -->
+<div class="bracket-card flex flex-col md:flex-row gap-8 overflow-hidden group">
+<div class="md:w-1/3 aspect-video md:aspect-auto">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="A tactical exoskeleton frame optimized for speed, featuring matte olive and black panels. The scene is a rainy outdoor urban environment at night with neon lights reflecting off the wet metal surfaces." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3yo5ShrNz5y_L4QCGTwn-G_jJkyN9GCCIW3i79V-tivZRkguwOw9MLznlS_48vTu2Kdyo95O2_Qg3GevuPYYFcwss8_3am1jbOpAZWRyhC4ojggdl7RnG26Q8yj3NU4MIiSjPwbJaQK2toW2CqYe5K7zdgjDfZFTkanUmJNoT6YnJVCqtNhyRKkLIwqFClXvjvvBAQ35NQ_nMxU_DGEUGQsyfdOHDesrVsakZa1JL-4mlo6mVJZR2MgPRrDxMAXHxAFg5KO4JodX0"/>
+</div>
+<div class="p-panel-padding flex-1 flex flex-col justify-center space-y-4">
+<div class="flex justify-between items-start">
+<div>
+<span class="font-label-sm text-tertiary">MODEL: TAC-SPECTOR</span>
+<h3 class="font-headline-lg text-on-surface">TACTICAL_RESPONSE_RIG</h3>
+</div>
+<div class="text-right">
+<div class="font-label-sm text-on-surface-variant">DIFFICULTY_RATING</div>
+<div class="flex gap-1 mt-1">
+<div class="w-4 h-2 bg-primary"></div>
+<div class="w-4 h-2 bg-primary"></div>
+<div class="w-4 h-2 bg-primary/20"></div>
+<div class="w-4 h-2 bg-primary/20"></div>
+<div class="w-4 h-2 bg-primary/20"></div>
+</div>
+</div>
+</div>
+<p class="font-body-md text-on-surface-variant max-w-2xl">Optimized for agility and environmental protection. Features ceramic plating and multi-spectral sensor arrays. Modular hardpoints for mission gear.</p>
+<div class="flex gap-4">
+<button class="font-label-lg px-6 py-2 bg-primary/10 border border-primary text-primary hover:bg-primary hover:text-on-primary transition-all">[ CONFIGURE_BUILD ]</button>
+<span class="text-headline-md text-on-surface self-center">$9,800</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Newsletter Terminal Section -->
+<section class="py-24 px-margin-desktop bg-surface-container">
+<div class="max-w-4xl mx-auto border border-primary p-8 bg-black/40 font-mono">
+<div class="flex items-center gap-2 mb-6 text-primary">
+<span class="w-3 h-3 rounded-full bg-error"></span>
+<span class="w-3 h-3 rounded-full bg-tertiary"></span>
+<span class="w-3 h-3 rounded-full bg-secondary"></span>
+<span class="ml-4 font-label-lg uppercase">EXO_COMMS_V4.0</span>
+</div>
+<div class="space-y-4 mb-8">
+<p class="text-secondary">&gt; CONNECTING TO ENCRYPTED_SERVER...</p>
+<p class="text-secondary">&gt; AUTHENTICATION_SUCCESSFUL</p>
+<p class="text-on-surface">Stay updated with the latest breakthroughs in cybernetic engineering. Our weekly transmission includes hardware leak reports and firmware update notifications.</p>
+</div>
+<div class="flex flex-col md:flex-row gap-4">
+<div class="flex-1 relative group">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-primary">&gt;</span>
+<input class="w-full bg-surface-container-lowest border border-outline-variant py-4 px-10 text-primary focus:outline-none focus:border-primary transition-colors" placeholder="ENTER_EMAIL_ADDRESS" type="email"/>
+</div>
+<button class="bg-primary text-on-primary px-12 py-4 font-label-lg hover:bg-primary-container transition-colors uppercase">
+                        SUBSCRIBE_CHANNEL
+                    </button>
+</div>
+<div class="mt-6 flex items-center gap-4 text-on-surface-variant text-body-md">
+<input class="w-4 h-4 rounded-none border border-primary bg-transparent appearance-none checked:bg-primary relative before:content-['X'] before:absolute before:inset-0 before:flex before:items-center before:justify-center before:text-[10px] before:text-on-primary before:hidden checked:before:block" id="terms" type="checkbox"/>
+<label for="terms">I ACCEPT DATA_TRANSMISSION_PROTOCOLS</label>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-unit-panel-padding px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-gutter border-t border-outline-variant bg-surface-container-lowest mt-12">
+<div class="flex flex-col md:items-start items-center">
+<span class="font-headline-md text-secondary uppercase">EXOFRAME SYSTEMS</span>
+<span class="font-label-sm text-on-surface-variant">© 2024 EXOFRAME SYSTEMS - ALL MODULES OPERATIONAL</span>
+</div>
+<div class="flex gap-8">
+<a class="text-on-surface-variant font-label-sm hover:text-secondary-fixed transition-colors cursor-crosshair" href="#">CIRCUIT_DIAGRAMS</a>
+<a class="text-on-surface-variant font-label-sm hover:text-secondary-fixed transition-colors cursor-crosshair" href="#">SENSORS</a>
+<a class="text-on-surface-variant font-label-sm hover:text-secondary-fixed transition-colors cursor-crosshair" href="#">ACTUATORS</a>
+<a class="text-on-surface-variant font-label-sm hover:text-secondary-fixed transition-colors cursor-crosshair" href="#">LOGISTICS</a>
+</div>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-primary text-body-md hover:opacity-80 transition-opacity cursor-pointer">rss_feed</span>
+<span class="material-symbols-outlined text-primary text-body-md hover:opacity-80 transition-opacity cursor-pointer">terminal</span>
+<span class="material-symbols-outlined text-primary text-body-md hover:opacity-80 transition-opacity cursor-pointer">hub</span>
+</div>
+</footer>
+<script>
+        // Custom Crosshair Cursor Logic
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        // Stat Count-up Logic
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerHTML = Math.floor(progress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateValue(document.getElementById('stat-1'), 0, 14200, 2000);
+                    animateValue(document.getElementById('stat-2'), 0, 842, 2500);
+                    animateValue(document.getElementById('stat-3'), 0, 99, 3000);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        observer.observe(document.getElementById('stat-1'));
+    </script>
+</body></html>
